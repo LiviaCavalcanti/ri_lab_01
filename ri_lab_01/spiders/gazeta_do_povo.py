@@ -43,24 +43,26 @@ class GazetaDoPovoSpider(scrapy.Spider):
             
     
     def news_parse(self, response):
-        pdb.set_trace()
+        # pdb.set_trace()
         dic = {}
         title = response.css('h1.col-8.c-left.c-title::text').get()
         if not title:
             title = response.css('h1.c-titulo::text').get()
             date = response.css('div.c-creditos time::text').getall()
             author = response.css('div.c-autor > span::text').get()
+            session = response.css('.c-nome-editoria span::text').get()
         else:
             subtitle = response.css('h2.c-sumario::text').get()
             author = response.css('div.item-name > span::text').get()
+            date = response.css('div.c-credits.mobile-hide li::text').get()
+            session = response.css('.c-nome-editoria span::text').get()
         
         text = ' '.join(response.css('div.gp-coluna.col-6.texto-materia.paywall-google p::text').getall())
 
 
-        dictionnaire = {'title': title, 'date': date, 'author': author, 'text:' text}
+        dictionnaire = {'title': title, 'date': date, 'author': author, 'text': text}
 
-        
-        
+        yield dictionnaire
         #
         #
         #
