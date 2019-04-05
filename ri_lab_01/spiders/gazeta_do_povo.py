@@ -32,18 +32,15 @@ class GazetaDoPovoSpider(scrapy.Spider):
             yield response.follow(link, callback=self.page_parse)
     
     def page_parse(self, response):
-        
-        session_news = response.css('.coluna1-2')
+
+        session_news = response.css('div.coluna1-2 article a::attr(href)').getall()
+
         for news_item in session_news:
-            # pdb.set_trace()
-            news_link = news_item.css('article > a::attr(href)').get()
-            news_date = news_item.css('article > a::attr(data-publication)').get()
-            news_section = news_item.css('article > a::attr(data-section)').get()
-            yield response.follow(news_link, callback=self.news_parse)
+            yield response.follow(news_item, callback=self.news_parse)
             
     
     def news_parse(self, response):
-        # pdb.set_trace()
+
         dic = {}
         title = response.css('h1.col-8.c-left.c-title::text').get()
         if not title:
