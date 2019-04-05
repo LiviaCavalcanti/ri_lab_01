@@ -6,6 +6,7 @@ from ri_lab_01.items import RiLab01Item
 from ri_lab_01.items import RiLab01CommentItem
 
 import pdb
+import ast
 # scrapy shell ./quotes-mapa.html 
 # response.css('.conteudo-mapa a').get()
 
@@ -40,32 +41,34 @@ class GazetaDoPovoSpider(scrapy.Spider):
             
     
     def news_parse(self, response):
-
         dic = {}
-        # pdb.set_trace()
+        pdb.set_trace()
         title = response.css('h1.col-8.c-left.c-title::text').get()
         if not title:
             title = response.css('h1.c-titulo::text').get()
-            date_hour = response.css('div.c-creditos time::text').getall()
+            date = response.css('div.c-creditos time::text').getall()
             author = response.css('.c-autor > span::text').get()
             session = response.css('.c-nome-editoria span::text').get()
+            
         else:
-            subtitle = response.css('h2.c-sumario::text').get()
             author = response.css('.item-name > span::text').get()
-            date_hour = response.css('.c-credits.mobile-hide li::text').get()
+            date = response.css('.c-credits.mobile-hide li::text').get()
             session = response.css('.c-nome-editoria span::text').get()
         
-        if(len(date_hour) > 0):
-            date = date_hour[0]
-            hour = date_hour[1]
-        else:
-            date = None
-            hour = None
+        if(isinstance(date, list)):
+            if len(date)>1:
+                date = date[0].replace('[','').replace(']','')
+            if len(date) == 1:
+                date = date[0]
+
         text = ' '.join(response.css('div.gp-coluna.col-6.texto-materia.paywall-google p::text').getall())
 
-        dictionnaire = {'title': title, 'date': date[0], 'hour': hour[1], 'author': author, 'text': text, 'session': session}
+        subtitle = response.css('h2.c-sumario::text').get()
+        dictionnaire = {'title': title, 'subtitle': subtitle, 'author': author, 'date': date, 'session': session, 'text': text, 'url': response.url}
+
 
         yield dictionnaire
         #
         #
         #
+
