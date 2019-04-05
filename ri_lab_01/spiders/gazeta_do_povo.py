@@ -41,7 +41,6 @@ class GazetaDoPovoSpider(scrapy.Spider):
             
     
     def news_parse(self, response):
-
         dic = {}
         pdb.set_trace()
         title = response.css('h1.col-8.c-left.c-title::text').get()
@@ -66,6 +65,7 @@ class GazetaDoPovoSpider(scrapy.Spider):
 
         subtitle = response.css('h2.c-sumario::text').get()
         dictionnaire = {'title': title, 'subtitle': subtitle, 'author': author, 'date': date, 'session': session, 'text': text, 'url': response.url}
+
 
         yield dictionnaire
         #
